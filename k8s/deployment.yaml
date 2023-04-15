@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: loan-approval-system
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: loan-approval-system
+  template:
+    metadata:
+      labels:
+        app: loan-approval-system
+    spec:
+      containers:
+        - name: loan-approval-system
+          image: your_docker_repository/loan-approval-system:latest
+          ports:
+            - containerPort: 8000
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: loan-approval-system-secrets
+                  key: database_url
+            - name: KAFKA_BOOTSTRAP_SERVERS
+              valueFrom:
+                configMapKeyRef:
+                  name: loan-approval-system-config
+                  key: kafka_bootstrap_servers
+            - name: KAFKA_TOPIC
+              valueFrom:
+                configMapKeyRef:
+                  name: loan-approval-system-config
+                  key: kafka_topic
