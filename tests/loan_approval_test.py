@@ -11,7 +11,7 @@ test_data = [
         "monthly_debt": 2000,
         "employment_status": "Employed",
         "risk_score": 20,
-        "expected_approval": True
+        "expected_approval": True,
     },
     {
         "credit_score": 600,
@@ -21,9 +21,10 @@ test_data = [
         "monthly_debt": 2000,
         "employment_status": "Employed",
         "risk_score": 60,
-        "expected_approval": False
-    }
+        "expected_approval": False,
+    },
 ]
+
 
 @pytest.mark.parametrize("test_input", test_data)
 def test_is_approved(test_input):
@@ -34,7 +35,9 @@ def test_is_approved(test_input):
         loan_purpose=test_input["loan_purpose"],
         monthly_income=test_input["monthly_income"],
         monthly_debt=test_input["monthly_debt"],
-        employment_status=test_input["employment_status"]
+        employment_status=test_input["employment_status"],
     )
-    is_approved = ApprovalCalculator.is_approved(application_data, test_input["risk_score"])
+    is_approved = ApprovalCalculator.is_approved(
+        application_data, test_input["risk_score"]
+    )
     assert is_approved == test_input["expected_approval"]

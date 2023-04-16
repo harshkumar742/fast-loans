@@ -1,6 +1,7 @@
 from typing import Optional
 from pydantic import BaseModel
 
+
 class LoanApplicationUpdate(BaseModel):
     applicant_name: Optional[str]
     credit_score: Optional[int]

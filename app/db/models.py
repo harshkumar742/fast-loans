@@ -18,14 +18,14 @@ class LoanApplication(Base):
 
     def dict(self):
         return {
-            'id': self.id,
-            'applicant_name': self.applicant_name,
-            'credit_score': self.credit_score,
-            'loan_amount': self.loan_amount,
-            'loan_purpose': self.loan_purpose,
-            'monthly_income': self.monthly_income,
-            'monthly_debt': self.monthly_debt,
-            'employment_status': self.employment_status,
-            'risk_score': self.risk_score,
-            'is_approved': self.is_approved,
+            "id": self.id,
+            "applicant_name": self.applicant_name,
+            "credit_score": self.credit_score,
+            "loan_amount": self.loan_amount,
+            "loan_purpose": self.loan_purpose,
+            "monthly_income": self.monthly_income,
+            "monthly_debt": self.monthly_debt,
+            "employment_status": self.employment_status,
+            "risk_score": self.risk_score,
+            "is_approved": self.is_approved,
         }

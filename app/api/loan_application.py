@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from app.db import crud, models, database
-from app.api.kafka_producer import produce_loan_application
-from app.api.models import LoanApplication
-from app.api.update_model import LoanApplicationUpdate
+from app.db import crud, database
+from app.kafka.producer import produce_loan_application
+from app.models.loan_application import LoanApplication
+from app.models.loan_application_update import LoanApplicationUpdate
 
 router = APIRouter()
 
@@ -19,7 +19,9 @@ def get_db():
 
 
 @router.post("/loan_applications/")
-async def create_loan_application(application: LoanApplication, db: Session = Depends(get_db)):
+async def create_loan_application(
+    application: LoanApplication, db: Session = Depends(get_db)
+):
     print(application)
     db_application = crud.create_loan_application(db, application)
     produce_loan_application(db_application)
@@ -28,24 +30,28 @@ async def create_loan_application(application: LoanApplication, db: Session = De
 
 @router.get("/loan_applications/{application_id}/")
 def get_loan_application(application_id: int, db: Session = Depends(get_db)):
-    db_application = crud.get_loan_application_by_id(
-        db, application_id=application_id)
+    db_application = crud.get_loan_application_by_id(db, application_id=application_id)
     if db_application is None:
         raise HTTPException(status_code=404, detail="Application not found")
     return db_application
 
 
 @router.put("/loan_applications/{application_id}/")
-def update_loan_application(application_id: int, application, db: Session = Depends(get_db)):
-    db_application = crud.update_loan_application(
-        db, application_id, application)
+def update_loan_application(
+    application_id: int, application, db: Session = Depends(get_db)
+):
+    db_application = crud.update_loan_application(db, application_id, application)
     if db_application is None:
         raise HTTPException(status_code=404, detail="Application not found")
     return db_application
 
 
 @router.patch("/loan_applications/{application_id}/")
-def update_loan_application(application_id: int, application: LoanApplicationUpdate, db: Session = Depends(get_db)):
+def update_loan_application(
+    application_id: int,
+    application: LoanApplicationUpdate,
+    db: Session = Depends(get_db),
+):
     db_application = crud.get_loan_application_by_id(db, application_id)
     if db_application is None:
         raise HTTPException(status_code=404, detail="Application not found")

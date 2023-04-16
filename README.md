@@ -118,7 +118,7 @@ Visit the link to interact with the loan application system through a web interf
 1. Run the tests with pytest:
 
    ```
-   pytest tests
+   pytest tests/
    ```
 
 ## Basic Project Structure
