@@ -3,6 +3,14 @@
 
 A simplified, scalable loan approval system that can evaluate loan applications, calculate the risk of lending, and approve or reject applications based on predefined criteria.
 
+## Frontend
+
+A frontend for the Fast Loans project is available at the following URL:
+
+[https://main.d221526vcnzerk.amplifyapp.com/](https://main.d221526vcnzerk.amplifyapp.com/)
+
+Visit the link to interact with the loan application system through a web interface.
+
 ## Table of Contents
 
 - [Requirements](#requirements)
