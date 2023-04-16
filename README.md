@@ -5,7 +5,7 @@ A simplified, scalable loan approval system that can evaluate loan applications,
 
 ## Frontend
 
-A frontend for the Fast Loans project is available at the following URL:
+A basic frontend for the Fast Loans project is available at the following URL:
 
 [https://main.d221526vcnzerk.amplifyapp.com/](https://main.d221526vcnzerk.amplifyapp.com/)
 
