@@ -74,6 +74,16 @@ Visit the link to interact with the loan application system through a web interf
 
 5. Configure your PostgreSQL database and Kafka broker settings in the `.env` file.
 
+   ```python
+   DB_URL = postgresql://username:password@hostname:port/database
+   KAFKA_BROKER_URL = your-kafka-broker-url:port
+   KAFKA_TOPIC = your-kafka-topic
+   KAFKA_SEC_PROTOCOL = your-security-protocol
+   KAFKA_SASL_MECH = your-sasl-mechanism
+   KAFKA_USERNAME = your-kafka-username
+   KAFKA_PASSWORD = your-kafka-password
+   ```
+
 6. Apply the database schema:
 
    ```python
@@ -111,7 +121,7 @@ Visit the link to interact with the loan application system through a web interf
    pytest tests
    ```
 
-## Project Structure
+## Basic Project Structure
 
 ```
 fast-loans
@@ -127,7 +137,7 @@ fast-loans
 ```
 
 - `app`: Contains the main components of the application.
-  - `api`: RESTful API to expose operations for submitting a new loan application, retrieving the status of a submitted application, updating and deleting an existing application, Kafka producer.
+  - `api`: RESTful API to expose operations for submitting a new loan application, retrieving the status of a submitted application, updating and deleting an existing application and Kafka producer.
   - `db`: Database configuration and models.
   - `kafka`: Kafka consumer implementation.
   - `loan_approval`: Logic for loan approval.
@@ -219,7 +229,7 @@ You can deploy this application on your preferred platform. Here are some exampl
 
 1. Set up an [Amazon RDS](https://aws.amazon.com/rds/) PostgreSQL instance.
 
-2. Create an [Amazon MSK](https://aws.amazon.com/msk/) Kafka cluster or use Confluent Kafka.
+2. Create an [Amazon MSK](https://aws.amazon.com/msk/) Kafka cluster or use [Confluent Kafka](https://www.confluent.io/get-started/).
 
 3. Deploy the Fast Loans application using [AWS Elastic Beanstalk](https://aws.amazon.com/elasticbeanstalk/) or [AWS Lambda](https://aws.amazon.com/lambda/) with [Zappa](https://github.com/Miserlou/Zappa).
 
