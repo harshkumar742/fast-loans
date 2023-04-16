@@ -1,8 +1,9 @@
 from sqlalchemy.orm import Session
 from . import models
 
-def create_loan_application(db: Session, application: models.LoanApplication):
+def create_loan_application(db: Session, application):
     db_application = models.LoanApplication(**application.dict())
+    print(db_application)
     db.add(db_application)
     db.commit()
     db.refresh(db_application)
@@ -11,7 +12,7 @@ def create_loan_application(db: Session, application: models.LoanApplication):
 def get_loan_application_by_id(db: Session, application_id: int):
     return db.query(models.LoanApplication).filter(models.LoanApplication.id == application_id).first()
 
-def update_loan_application(db: Session, application_id: int, application: models.LoanApplication):
+def update_loan_application(db: Session, application_id: int, application):
     db_application = db.query(models.LoanApplication).filter(models.LoanApplication.id == application_id).first()
     if db_application is None:
         return None

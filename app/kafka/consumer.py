@@ -9,6 +9,10 @@ import json
 def loan_application_consumer():
     conf = {
         'bootstrap.servers': os.getenv("KAFKA_BROKER_URL"),
+        'security.protocol': os.getenv('KAFKA_SEC_PROTOCOL'),
+        'sasl.mechanisms': os.getenv('KAFKA_SASL_MECH'),
+        'sasl.username': os.getenv('KAFKA_USERNAME'),
+        'sasl.password': os.getenv('KAFKA_PASSWORD'),
         'group.id': 'loan_approval_group'
     }
     consumer = Consumer(conf)
@@ -23,6 +27,7 @@ def loan_application_consumer():
             print(f"Error: {msg.error()}")
         else:
             application_data = json.loads(msg.value())
+            print('------------------------------------------------')
             application = LoanApplication(**application_data)
 
             risk_score = RiskCalculator.calculate_risk(application)
