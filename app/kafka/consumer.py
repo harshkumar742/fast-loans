@@ -6,6 +6,7 @@ from app.db import crud, database
 import os
 import json
 
+
 def loan_application_consumer():
     conf = {
         'bootstrap.servers': os.getenv("KAFKA_BROKER_URL"),
@@ -27,11 +28,14 @@ def loan_application_consumer():
             print(f"Error: {msg.error()}")
         else:
             application_data = json.loads(msg.value())
-            print('------------------------------------------------')
             application = LoanApplication(**application_data)
 
             risk_score = RiskCalculator.calculate_risk(application)
-            is_approved = ApprovalCalculator.is_approved(application, risk_score)
+            is_approved = ApprovalCalculator.is_approved(
+                application, risk_score)
+
+            application.risk_score = risk_score
+            application.is_approved = is_approved
 
             with database.SessionLocal() as db:
-                crud.update_loan_application(db, application.id, risk_score, is_approved)
+                crud.update_loan_application(db, application.id, application)

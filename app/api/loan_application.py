@@ -3,10 +3,13 @@ from sqlalchemy.orm import Session
 from app.db import crud, models, database
 from app.api.kafka_producer import produce_loan_application
 from app.api.models import LoanApplication
+from app.api.update_model import LoanApplicationUpdate
 
 router = APIRouter()
 
 # Dependency
+
+
 def get_db():
     db = database.SessionLocal()
     try:
@@ -38,6 +41,22 @@ def update_loan_application(application_id: int, application, db: Session = Depe
         db, application_id, application)
     if db_application is None:
         raise HTTPException(status_code=404, detail="Application not found")
+    return db_application
+
+
+@router.patch("/loan_applications/{application_id}/")
+def update_loan_application(application_id: int, application: LoanApplicationUpdate, db: Session = Depends(get_db)):
+    db_application = crud.get_loan_application_by_id(db, application_id)
+    if db_application is None:
+        raise HTTPException(status_code=404, detail="Application not found")
+
+    update_data = application.dict(exclude_unset=True)
+
+    for key, value in update_data.items():
+        setattr(db_application, key, value)
+
+    db.commit()
+    db.refresh(db_application)
     return db_application
 
 

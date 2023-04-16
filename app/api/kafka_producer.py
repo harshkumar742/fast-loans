@@ -16,7 +16,8 @@ def produce_loan_application(application):
     producer = Producer(conf)
 
     # Serialize the loan application as JSON
-    application_dict = {column.name: str(getattr(application, column.name)) for column in application.__table__.columns}
+    application_dict = {column.name: getattr(
+        application, column.name) for column in application.__table__.columns}
     application_json = json.dumps(application_dict)
 
     # Produce the message to the Kafka topic

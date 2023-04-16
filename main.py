@@ -1,14 +1,16 @@
+import argparse
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+import uvicorn
 from app.db.database import engine, Base
 from app.api import loan_application
 from app.kafka.consumer import loan_application_consumer
 import threading
-import os
 
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
+
 
 app.add_middleware(
     CORSMiddleware,
@@ -27,8 +29,14 @@ def run_consumer():
 
 
 if __name__ == "__main__":
-    consumer_thread = threading.Thread(target=run_consumer, daemon=True)
-    consumer_thread.start()
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--consumer', action='store_true', help='Run Kafka consumer only')
+    args = parser.parse_args()
 
-    import uvicorn
-    uvicorn.run(app)
+    if args.consumer:
+        for i in range(2):
+            print("Consumer started: ", i)
+            consumer_thread = threading.Thread(target=run_consumer, daemon=True)
+            consumer_thread.start()
+    else:
+        uvicorn.run(app)
