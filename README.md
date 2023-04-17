@@ -181,13 +181,8 @@ Based on the rough capacity estimation, here's an infrastructure estimation for 
 
 ## Running the Application
 
-1. To run the application as a Kafka consumer, use the following command:
 
-   ```
-   python main.py --consumer
-   ```
-
-2. To run the application as a FastAPI server, use one of the following commands:
+1. To run the application as a FastAPI server, use one of the following commands:
 
    ```
    python main.py
@@ -197,6 +192,12 @@ Based on the rough capacity estimation, here's an infrastructure estimation for 
 
    ```
    uvicorn main:app --workers 4
+   ```
+   
+2. To run the application as a Kafka consumer, use the following command:
+
+   ```
+   python main.py --consumer
    ```
 
 ## Running Tests
