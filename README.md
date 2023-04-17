@@ -68,7 +68,7 @@ To perform a rough capacity estimation for "Fast Loans" application with 1 milli
 - Data in per second (peak): 46 requests/sec * 1 KB (write) * 20% = 9.2 KB/sec
 - Data out per second (peak): 46 requests/sec * 1 KB (read) * 80% = 36.8 KB/sec
 
-With these rough capacity estimations, we can plan your infrastructure, scaling, and caching strategies accordingly. These numbers are based on assumptions and should be adjusted and monitored as needed based on real-world usage patterns.
+With these rough capacity estimations, we can plan our infrastructure, scaling, and caching strategies accordingly. These numbers are based on assumptions and should be adjusted and monitored as needed based on real-world usage patterns.
 
 ### Rough Infrastructure Estimation for Fast Loans
 
