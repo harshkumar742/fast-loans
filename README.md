@@ -31,7 +31,7 @@ Visit the link to interact with the loan application system through a web interf
 - [Authors](#authors)
 
 ## High Level System Design
-![Architecture Diagram](https://www.slideteam.net/media/catalog/product/cache/1280x720/l/o/loan_approval_process_powerpoint_images_Slide01.jpg)
+![Architecture Diagram]()
 ### Components
 1. **Load Balancer**: Distributes incoming traffic among multiple instances of the Uvicorn server.
 2. **API Layer**: FastAPI with multiple instances of the Uvicorn server, each having multiple workers, is used to create RESTful API endpoints to handle CRUD operations (Create, Read, Update, Delete) for loan applications.
