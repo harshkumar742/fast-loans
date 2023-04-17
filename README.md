@@ -17,6 +17,7 @@ Visit the link to interact with the loan application system through a web interf
 - [Setup](#setup)
 - [Running the Application](#running-the-application)
 - [Running Tests](#running-tests)
+- [Logging](#logging)
 - [Project Structure](#project-structure)
 - [API Endpoints](#api-endpoints)
 - [Database Model](#database-model)
@@ -30,7 +31,7 @@ Visit the link to interact with the loan application system through a web interf
 - [Authors](#authors)
 
 ## High Level System Design
-
+![Architecture Diagram]()
 ### Components
 1. **Load Balancer**: Distributes incoming traffic among multiple instances of the Uvicorn server.
 2. **API Layer**: FastAPI with multiple instances of the Uvicorn server, each having multiple workers, is used to create RESTful API endpoints to handle CRUD operations (Create, Read, Update, Delete) for loan applications.
@@ -180,13 +181,8 @@ Based on the rough capacity estimation, here's an infrastructure estimation for 
 
 ## Running the Application
 
-1. To run the application as a Kafka consumer, use the following command:
 
-   ```
-   python main.py --consumer
-   ```
-
-2. To run the application as a FastAPI server, use one of the following commands:
+1. To run the application as a FastAPI server, use one of the following commands:
 
    ```
    python main.py
@@ -197,6 +193,12 @@ Based on the rough capacity estimation, here's an infrastructure estimation for 
    ```
    uvicorn main:app --workers 4
    ```
+   
+2. To run the application as a Kafka consumer, use the following command:
+
+   ```
+   python main.py --consumer
+   ```
 
 ## Running Tests
 
@@ -205,6 +207,14 @@ Based on the rough capacity estimation, here's an infrastructure estimation for 
    ```
    pytest tests/
    ```
+
+## Logging
+
+- Fast Loans uses the Python `logging` module for logging. The logging configuration is set up in the `logging_config.py` file, which defines a `configure_logging` function that sets up a logger with a specific format and level.
+
+- The `configure_logging` function is then called in the main FastAPI application file (`main.py`) and in other files where logging is needed, to set up the logger for that specific module.
+
+- The log messages are written to a file named `app.log` in the `logs` directory. Each log message includes the timestamp, logger name, severity level, and message text.
 
 ## Basic Project Structure
 
@@ -216,7 +226,8 @@ fast-loans
 │   ├── kafka
 │   ├── models
 │   ├── loan_approval
-│   └── risk_assessment
+│   ├── risk_assessment
+    └── logging_config.py
 ├── tests
 ├── main.py
 └── requirements.txt
@@ -229,6 +240,7 @@ fast-loans
   - `models`: Pydantic models to validate the data received in API requests .
   - `loan_approval`: Logic for loan approval.
   - `risk_assessment`: Risk assessment for loan applications.
+  - `logging_config.py`: Logging configuration.
 - `tests`: Contains test files for the application.
 - `main.py`: The main entry point of the application.
 - `requirements.txt`: Contains the list of required packages for the project.
