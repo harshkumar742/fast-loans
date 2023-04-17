@@ -170,15 +170,6 @@ Based on the rough capacity estimation, here's an infrastructure estimation for 
    KAFKA_PASSWORD = your-kafka-password
    ```
 
-6. Apply the database schema:
-
-   ```python
-   from app.db.database import engine
-   from app.db.models import Base
-
-   Base.metadata.create_all(bind=engine)
-   ```
-
 ## Running the Application
 
 
