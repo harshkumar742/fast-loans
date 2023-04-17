@@ -5,6 +5,9 @@ from app.db.models import LoanApplication
 from app.db import crud, database
 import os
 import json
+from app.logging_config import configure_logging
+
+logger = configure_logging(__name__)
 
 
 def loan_application_consumer():
@@ -25,7 +28,7 @@ def loan_application_consumer():
             continue
 
         if msg.error():
-            print(f"Error: {msg.error()}")
+            logger.error(f"Error: {msg.error()}")
         else:
             application_data = json.loads(msg.value())
             application = LoanApplication(**application_data)
@@ -38,3 +41,6 @@ def loan_application_consumer():
 
             with database.SessionLocal() as db:
                 crud.update_loan_application(db, application.id, application)
+                logger.info(
+                    f"Loan application with ID {application.id} processed successfully"
+                )

@@ -5,6 +5,6 @@ class ApprovalCalculator:
         if risk_score < 30:
             return True
         elif risk_score < 60:
-            if application.loan_purpose.lower() != "Debt Consolidation":
+            if application.loan_purpose != "debt_consolidation":
                 return True
         return False

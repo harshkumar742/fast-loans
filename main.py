@@ -1,15 +1,12 @@
-import logging
 import argparse
 from fastapi import FastAPI
-
 from fastapi.middleware.cors import CORSMiddleware
-
-import uvicorn
+from app.logging_config import configure_logging
 from app.db.database import engine, Base
 from app.api import loan_application
 from app.kafka.consumer import loan_application_consumer
 import threading
-
+import uvicorn
 
 # Create the database tables using SQLAlchemy
 Base.metadata.create_all(bind=engine)
@@ -26,14 +23,17 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Configure logging
+logger = configure_logging(__name__)
 
 # Include the loan application API router
 app.include_router(loan_application.router, prefix="/api")
 
-
 # Define a function to run the Kafka consumer in a separate thread
+
+
 def run_consumer():
-    # logger.info("Starting Kafka consumer")
+    logger.info("Starting Kafka consumer")
     loan_application_consumer()
 
 
@@ -48,10 +48,10 @@ if __name__ == "__main__":
     # If the --consumer flag was passed, run the Kafka consumer in two separate threads
     if args.consumer:
         for i in range(2):
-            # logger.info("Starting consumer thread %d", i)
-            consumer_thread = threading.Thread(target=run_consumer, daemon=True)
+            logger.info("Starting consumer thread %d", i)
+            consumer_thread = threading.Thread(target=run_consumer)
             consumer_thread.start()
     # Otherwise, run the FastAPI application using Uvicorn
     else:
-        # logger.info("Starting FastAPI application")
+        logger.info("Starting FastAPI application")
         uvicorn.run(app)
