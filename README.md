@@ -12,7 +12,7 @@ A basic frontend for the Fast Loans project is available at the following URL:
 Visit the link to interact with the loan application system through a web interface.
 
 ## Table of Contents
-
+- [High Level System Design](#high-level-system-design)
 - [Requirements](#requirements)
 - [Setup](#setup)
 - [Running the Application](#running-the-application)
@@ -28,6 +28,91 @@ Visit the link to interact with the loan application system through a web interf
 - [Support](#support)
 - [Acknowledgements](#acknowledgements)
 - [Authors](#authors)
+
+## High Level System Design
+
+### Components
+1. **Load Balancer**: Distributes incoming traffic among multiple instances of the Uvicorn server.
+2. **API Layer**: FastAPI with multiple instances of the Uvicorn server, each having multiple workers, is used to create RESTful API endpoints to handle CRUD operations (Create, Read, Update, Delete) for loan applications.
+3. **Cache Layer**: Redis can be used as a caching layer to store frequently accessed data, reducing the load on the PostgreSQL database. Not Implemented.
+4. **Message Queue**: Kafka is used for processing loan applications asynchronously. Loan applications are sent to the Kafka producer, which will be consumed by multiple Kafka consumers for scaling.
+5. **Database Layer**: PostgreSQL with replication is used as the RDS database to store loan applications and their associated data.
+6. **Risk Assessment Module**: Calculates the risk score for each loan application.
+7. **Loan Approval Module**: Evaluates the risk score and approves or rejects loan applications based on predefined criteria.
+
+### Rough Capacity Estimation for "Fast Loans" Application
+
+To perform a rough capacity estimation for "Fast Loans" application with 1 million users and 1 application per user per day, we'll make a few assumptions and estimations on the expected usage and requirements. These numbers are rough estimates and can be adjusted based on our specific use case.
+
+**Assumptions**:
+
+- Number of daily active users (DAU): 1,000,000
+- Number of loan applications per user per day: 1
+- Average size of a loan application record: 1 KB (considering all fields and metadata)
+- Read/Write ratio: 80% read and 20% write
+
+**Calculations**:
+
+- Loan applications per day: 1,000,000 users * 1 application/user = 1,000,000 loan applications
+- Storage requirement per day: 1,000,000 loan applications * 1 KB/application = 1,000,000 KB = 1,000 MB = 1 GB
+- Storage requirement for 30 days: 1 GB/day * 30 days = 30 GB
+
+**Traffic Estimation**:
+
+- Total requests per day: 1,000,000 loan applications * (80% read + 20% write) = 2,000,000 requests
+- Requests per second (peak): (2,000,000 requests/day) / (24 hours * 3600 seconds) * 2 (assuming a 2x peak factor) ≈ 46 requests/sec
+
+**Bandwidth Estimation**:
+
+- Data in per second (peak): 46 requests/sec * 1 KB (write) * 20% = 9.2 KB/sec
+- Data out per second (peak): 46 requests/sec * 1 KB (read) * 80% = 36.8 KB/sec
+
+With these rough capacity estimations, we can plan your infrastructure, scaling, and caching strategies accordingly. These numbers are based on assumptions and should be adjusted and monitored as needed based on real-world usage patterns.
+
+### Rough Infrastructure Estimation for Fast Loans
+
+Based on the rough capacity estimation, here's an infrastructure estimation for our "Fast Loans" application with 1 million users and 1 application per user per day:
+
+**Load Balancer(s)**:
+
+- 1 or more load balancers to distribute the incoming traffic across multiple instances of the Uvicorn server. We may need to scale this horizontally based on the actual request rate and our chosen load balancing solution.
+
+**FastAPI Instances (Uvicorn servers)**:
+
+- Start with 5-10 instances of the Uvicorn server, with each instance running multiple workers (e.g., 4-8 workers). Allocate 2-4 GB RAM per instance. Monitor the CPU and memory usage of these instances and adjust the number of instances or workers as needed to maintain optimal performance.
+
+**Redis Cache**:
+
+- Use 1 or more Redis instances to cache frequently accessed data and reduce the load on the PostgreSQL database. Consider using Redis clustering for improved performance and high availability. Allocate at least 5 GB RAM for caching, considering the size of the dataset and potential growth.
+
+**Kafka Cluster**:
+
+- Use a Kafka cluster with at least 3 brokers for high availability and fault tolerance. Adjust the number of brokers based on the actual message throughput and desired level of redundancy.Allocate 4-8 GB RAM per Kafka broker.
+
+**Kafka Consumers**:
+
+- Start with 5-10 Kafka consumers for processing loan applications. Monitor their performance and scale the number of consumers as needed to maintain optimal processing rates.Allocate 1-2 GB RAM per Kafka Consumer, depending on the number of topics, partitions, and message throughput.
+
+**PostgreSQL Database**:
+
+- Use a PostgreSQL database with at least 1 primary and 1 replica (for high availability) and 30 GB of storage capacity. Monitor the storage usage and scale the storage capacity and number of replicas as needed based on our data retention policy and performance requirements.
+- Allocate 8-16 GB RAM for the primary and replica instances. Monitor the database's performance and memory usage, and adjust the RAM allocation as needed.
+
+**Risk Assessment and Loan Approval Modules**:
+
+- Deploy these modules on separate servers or containers, with sufficient CPU and memory resources to handle the expected load. Allocate 2-4 GB RAM per server or container. Monitor their performance and scale them as needed to maintain optimal processing times.
+
+**Error logging and latency monitoring**:
+
+- Use Sentry for error logging and automatic error tracking.
+- Integrate Elastic APM for latency monitoring and tracing, which helps us identify performance bottlenecks and optimize our application.
+
+**Deploying**:
+
+- Deploying using Docker and Kubernetes can help manage the scaling, deployment, and orchestration of our application components.
+- Create separate Docker images for each component of our application, such as FastAPI, Risk Assessment Module, Loan Approval Module, and Kafka Consumer.
+- Use a Kubernetes cluster with at least 3 master nodes and a sufficient number of worker nodes to handle the deployment of application components.
+
 
 ## Requirements
 
@@ -129,6 +214,7 @@ fast-loans
 │   ├── api
 │   ├── db
 │   ├── kafka
+│   ├── models
 │   ├── loan_approval
 │   └── risk_assessment
 ├── tests
@@ -140,6 +226,7 @@ fast-loans
   - `api`: RESTful API to expose operations for submitting a new loan application, retrieving the status of a submitted application, updating and deleting an existing application and Kafka producer.
   - `db`: Database configuration and models.
   - `kafka`: Kafka consumer implementation.
+  - `models`: Pydantic models to validate the data received in API requests .
   - `loan_approval`: Logic for loan approval.
   - `risk_assessment`: Risk assessment for loan applications.
 - `tests`: Contains test files for the application.
