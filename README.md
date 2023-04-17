@@ -214,7 +214,7 @@ Based on the rough capacity estimation, here's an infrastructure estimation for 
 
 - The `configure_logging` function is then called in the main FastAPI application file (`main.py`) and in other files where logging is needed, to set up the logger for that specific module.
 
-- The log messages are written to a file named `app.log` in the `logs` directory. Each log message includes the timestamp, logger name, severity level, and message text.
+- The log messages are written to a file named `app.log`. Each log message includes the timestamp, logger name, severity level, and message text.
 
 ## Basic Project Structure
 
