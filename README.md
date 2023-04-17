@@ -31,7 +31,7 @@ Visit the link to interact with the loan application system through a web interf
 - [Authors](#authors)
 
 ## High Level System Design
-![Architecture Diagram]()
+![Architecture Diagram](fastapi.png)
 ### Components
 1. **Load Balancer**: Distributes incoming traffic among multiple instances of the Uvicorn server.
 2. **API Layer**: FastAPI with multiple instances of the Uvicorn server, each having multiple workers, is used to create RESTful API endpoints to handle CRUD operations (Create, Read, Update, Delete) for loan applications.
@@ -68,7 +68,7 @@ To perform a rough capacity estimation for "Fast Loans" application with 1 milli
 - Data in per second (peak): 46 requests/sec * 1 KB (write) * 20% = 9.2 KB/sec
 - Data out per second (peak): 46 requests/sec * 1 KB (read) * 80% = 36.8 KB/sec
 
-With these rough capacity estimations, we can plan your infrastructure, scaling, and caching strategies accordingly. These numbers are based on assumptions and should be adjusted and monitored as needed based on real-world usage patterns.
+With these rough capacity estimations, we can plan our infrastructure, scaling, and caching strategies accordingly. These numbers are based on assumptions and should be adjusted and monitored as needed based on real-world usage patterns.
 
 ### Rough Infrastructure Estimation for Fast Loans
 
@@ -214,7 +214,7 @@ Based on the rough capacity estimation, here's an infrastructure estimation for 
 
 - The `configure_logging` function is then called in the main FastAPI application file (`main.py`) and in other files where logging is needed, to set up the logger for that specific module.
 
-- The log messages are written to a file named `app.log` in the `logs` directory. Each log message includes the timestamp, logger name, severity level, and message text.
+- The log messages are written to a file named `app.log`. Each log message includes the timestamp, logger name, severity level, and message text.
 
 ## Basic Project Structure
 
