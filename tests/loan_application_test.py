@@ -103,9 +103,7 @@ def test_patch_loan_application_error():
     # Try to patch a loan application with an invalid ID
     invalid_id = 999999
     updated_data = {"applicant_name": "Jane Doe"}
-    response = client.patch(
-        f"/api/loan_applications/{invalid_id}/", json=updated_data
-    )
+    response = client.patch(f"/api/loan_applications/{invalid_id}/", json=updated_data)
     assert response.status_code == 404
 
     # Try to patch a loan application with invalid data

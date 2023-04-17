@@ -20,7 +20,7 @@ def get_db():
 
 
 @router.post("/loan_applications/")
-async def create_loan_application(
+def create_loan_application(
     application: LoanApplication, db: Session = Depends(get_db)
 ):
     try:

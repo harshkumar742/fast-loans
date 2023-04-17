@@ -33,7 +33,7 @@ test_data = [
         "risk_score": 60,
         "expected_approval": False,
     },
-     {
+    {
         "credit_score": 700,
         "loan_amount": 150000,
         "loan_purpose": "debt_consolidation",
