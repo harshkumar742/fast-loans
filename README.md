@@ -195,7 +195,7 @@ Based on the rough capacity estimation, here's an infrastructure estimation for 
    or
 
    ```
-   uvicorn main:app
+   uvicorn main:app --workers 4
    ```
 
 ## Running Tests
@@ -223,9 +223,9 @@ fast-loans
 ```
 
 - `app`: Contains the main components of the application.
-  - `api`: RESTful API to expose operations for submitting a new loan application, retrieving the status of a submitted application, updating and deleting an existing application and Kafka producer.
+  - `api`: RESTful API to expose operations for submitting a new loan application, retrieving the status of a submitted application and updating and deleting an existing application.
   - `db`: Database configuration and models.
-  - `kafka`: Kafka consumer implementation.
+  - `kafka`: Kafka producer and consumer implementation.
   - `models`: Pydantic models to validate the data received in API requests .
   - `loan_approval`: Logic for loan approval.
   - `risk_assessment`: Risk assessment for loan applications.
