@@ -4,6 +4,7 @@ import json
 import os
 from app.logging_config import configure_logging
 
+
 logger = configure_logging(__name__)
 
 
@@ -17,6 +18,7 @@ def produce_loan_application(application):
             "sasl.username": os.getenv("KAFKA_USERNAME"),
             "sasl.password": os.getenv("KAFKA_PASSWORD"),
         }
+
         producer = Producer(conf)
 
         # Serialize the loan application as JSON
@@ -31,6 +33,7 @@ def produce_loan_application(application):
             os.getenv("KAFKA_TOPIC"), key=str(application.id), value=application_json
         )
         producer.flush()
+
         logger.info(
             f"Produced loan application with ID {application.id} to Kafka topic"
         )

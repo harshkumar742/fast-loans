@@ -7,6 +7,7 @@ import os
 import json
 from app.logging_config import configure_logging
 
+
 logger = configure_logging(__name__)
 
 
@@ -19,11 +20,13 @@ def loan_application_consumer():
         "sasl.password": os.getenv("KAFKA_PASSWORD"),
         "group.id": "loan_approval_group",
     }
+
     consumer = Consumer(conf)
     consumer.subscribe([os.getenv("KAFKA_TOPIC")])
 
     while True:
         msg = consumer.poll(1.0)
+
         if msg is None:
             continue
 
@@ -41,6 +44,7 @@ def loan_application_consumer():
 
             with database.SessionLocal() as db:
                 crud.update_loan_application(db, application.id, application)
+
                 logger.info(
                     f"Loan application with ID {application.id} processed successfully"
                 )

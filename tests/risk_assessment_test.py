@@ -35,5 +35,6 @@ def test_calculate_risk(test_input):
         monthly_debt=test_input["monthly_debt"],
         employment_status=test_input["employment_status"],
     )
+
     risk_score = RiskCalculator.calculate_risk(application_data)
     assert risk_score == test_input["expected_risk_score"]

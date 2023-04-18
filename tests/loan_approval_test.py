@@ -57,6 +57,7 @@ def test_is_approved(test_input):
         monthly_debt=test_input["monthly_debt"],
         employment_status=test_input["employment_status"],
     )
+
     is_approved = ApprovalCalculator.is_approved(
         application_data, test_input["risk_score"]
     )

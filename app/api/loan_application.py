@@ -25,10 +25,14 @@ def create_loan_application(
 ):
     try:
         logger.info("Creating loan application: %s", application)
+
         db_application = crud.create_loan_application(db, application)
         produce_loan_application(db_application)
+
         logger.info("Loan application created successfully")
+
         return db_application
+
     except Exception as e:
         logger.error("Error creating loan application: %s", e)
         raise HTTPException(status_code=500, detail="Error creating loan application")
@@ -38,16 +42,22 @@ def create_loan_application(
 def get_loan_application(application_id: int, db: Session = Depends(get_db)):
     try:
         logger.info("Getting loan application with ID: %s", application_id)
+
         db_application = crud.get_loan_application_by_id(
             db, application_id=application_id
         )
+
         if db_application is None:
             logger.warning("Loan application with ID %s not found", application_id)
             raise HTTPException(status_code=404, detail="Application not found")
+
         logger.info("Loan application retrieved successfully")
+
         return db_application
+
     except HTTPException:
         raise  # re-raise HTTPException so FastAPI can handle it
+
     except Exception as e:
         logger.error("Error getting loan application: %s", e)
         raise HTTPException(status_code=500, detail="Error getting loan application")
@@ -59,14 +69,20 @@ def update_loan_application(
 ):
     try:
         logger.info("Updating loan application with ID: %s", application_id)
+
         db_application = crud.update_loan_application(db, application_id, application)
+
         if db_application is None:
             logger.warning("Loan application with ID %s not found", application_id)
             raise HTTPException(status_code=404, detail="Application not found")
+
         logger.info("Loan application updated successfully")
+
         return db_application
+
     except HTTPException:
         raise  # re-raise HTTPException so FastAPI can handle it
+
     except Exception as e:
         logger.error("Error updating loan application: %s", e)
         raise HTTPException(status_code=500, detail="Error updating loan application")
@@ -80,7 +96,9 @@ def patch_loan_application(
 ):
     try:
         logger.info("Patching loan application with ID: %s", application_id)
+
         db_application = crud.get_loan_application_by_id(db, application_id)
+
         if db_application is None:
             logger.warning("Loan application with ID %s not found", application_id)
             raise HTTPException(status_code=404, detail="Application not found")
@@ -92,10 +110,14 @@ def patch_loan_application(
 
         db.commit()
         db.refresh(db_application)
+
         logger.info("Loan application patched successfully")
+
         return db_application
+
     except HTTPException:
         raise  # re-raise HTTPException so FastAPI can handle it
+
     except Exception as e:
         logger.error("Error patching loan application: %s", e)
         raise HTTPException(status_code=500, detail="Error patching loan application")
@@ -105,14 +127,20 @@ def patch_loan_application(
 def delete_loan_application(application_id: int, db: Session = Depends(get_db)):
     try:
         logger.info("Deleting loan application with ID: %s", application_id)
+
         success = crud.delete_loan_application(db, application_id)
+
         if not success:
             logger.warning("Loan application with ID %s not found", application_id)
             raise HTTPException(status_code=404, detail="Application not found")
+
         logger.info("Loan application deleted successfully")
+
         return {"detail": "Application deleted"}
+
     except HTTPException:
         raise  # re-raise HTTPException so FastAPI can handle it
+
     except Exception as e:
         logger.error("Error deleting loan application: %s", e)
         raise HTTPException(status_code=500, detail="Error deleting loan application")
