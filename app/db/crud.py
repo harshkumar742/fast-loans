@@ -7,7 +7,6 @@ def create_loan_application(db: Session, application):
 
     db.add(db_application)
     db.commit()
-
     db.refresh(db_application)
 
     return db_application
