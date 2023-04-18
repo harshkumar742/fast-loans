@@ -30,8 +30,6 @@ logger = configure_logging(__name__)
 app.include_router(loan_application.router, prefix="/api")
 
 # Define a function to run the Kafka consumer in a separate thread
-
-
 def run_consumer():
     logger.info("Starting Kafka consumer")
     loan_application_consumer()
