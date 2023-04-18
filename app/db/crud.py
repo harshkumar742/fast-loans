@@ -40,6 +40,27 @@ def update_loan_application(db: Session, application_id: int, application):
     return db_application
 
 
+def patch_loan_application(db: Session, application_id: int, application):
+    db_application = (
+        db.query(models.LoanApplication)
+        .filter(models.LoanApplication.id == application_id)
+        .first()
+    )
+
+    if db_application is None:
+        return None
+
+    update_data = application.dict(exclude_unset=True)
+
+    for key, value in update_data.items():
+        setattr(db_application, key, value)
+
+    db.commit()
+    db.refresh(db_application)
+
+    return db_application
+
+
 def delete_loan_application(db: Session, application_id: int):
     db_application = (
         db.query(models.LoanApplication)

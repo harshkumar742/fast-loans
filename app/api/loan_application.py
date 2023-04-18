@@ -97,19 +97,11 @@ def patch_loan_application(
     try:
         logger.info("Patching loan application with ID: %s", application_id)
 
-        db_application = crud.get_loan_application_by_id(db, application_id)
+        db_application = crud.patch_loan_application(db, application_id, application)
 
         if db_application is None:
             logger.warning("Loan application with ID %s not found", application_id)
             raise HTTPException(status_code=404, detail="Application not found")
-
-        update_data = application.dict(exclude_unset=True)
-
-        for key, value in update_data.items():
-            setattr(db_application, key, value)
-
-        db.commit()
-        db.refresh(db_application)
 
         logger.info("Loan application patched successfully")
 
