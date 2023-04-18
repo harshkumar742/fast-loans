@@ -1,138 +1,148 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from app.db import crud, database
-from app.kafka.producer import produce_loan_application
 from app.models.loan_application import LoanApplication
 from app.models.loan_application_update import LoanApplicationUpdate
 from app.logging_config import configure_logging
+from app.db.crud import LoanApplicationCRUD
+from app.db.database import DatabaseConnection
 
 logger = configure_logging(__name__)
 router = APIRouter()
 
-
-# Dependency
-def get_db():
-    db = database.SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+database_connection = DatabaseConnection()
+crud = LoanApplicationCRUD(database_connection.SessionLocal())
 
 
-@router.post("/loan_applications/")
-def create_loan_application(
-    application: LoanApplication, db: Session = Depends(get_db)
-):
-    try:
-        logger.info("Creating loan application: %s", application)
+class LoanApplicationAPI:
+    def __init__(self):
+        self.router = router
 
-        db_application = crud.create_loan_application(db, application)
-        produce_loan_application(db_application)
+    @router.post("/loan_applications/")
+    def create_loan_application(
+            application: LoanApplication):
+        try:
+            logger.info("Creating loan application: %s", application)
 
-        logger.info("Loan application created successfully")
+            db_application = crud.create_loan_application(application)
 
-        return db_application
+            logger.info("Loan application created successfully")
 
-    except Exception as e:
-        logger.error("Error creating loan application: %s", e)
-        raise HTTPException(status_code=500, detail="Error creating loan application")
+            return db_application
 
+        except Exception as e:
+            logger.error("Error creating loan application: %s", e)
+            raise HTTPException(
+                status_code=500, detail="Error creating loan application")
+        
 
-@router.get("/loan_applications/{application_id}/")
-def get_loan_application(application_id: int, db: Session = Depends(get_db)):
-    try:
-        logger.info("Getting loan application with ID: %s", application_id)
+    @router.get("/loan_applications/{application_id}/")
+    def get_loan_application(application_id: int):
+        try:
+            logger.info("Getting loan application with ID: %s", application_id)
 
-        db_application = crud.get_loan_application_by_id(
-            db, application_id=application_id
-        )
+            db_application = crud.get_loan_application_by_id(
+                application_id=application_id)
 
-        if db_application is None:
-            logger.warning("Loan application with ID %s not found", application_id)
-            raise HTTPException(status_code=404, detail="Application not found")
+            if db_application is None:
+                logger.warning(
+                    "Loan application with ID %s not found", application_id)
+                raise HTTPException(
+                    status_code=404, detail="Application not found")
 
-        logger.info("Loan application retrieved successfully")
+            logger.info("Loan application retrieved successfully")
 
-        return db_application
+            return db_application
 
-    except HTTPException:
-        raise  # re-raise HTTPException so FastAPI can handle it
+        except HTTPException:
+            raise  # re-raise HTTPException so FastAPI can handle it
 
-    except Exception as e:
-        logger.error("Error getting loan application: %s", e)
-        raise HTTPException(status_code=500, detail="Error getting loan application")
+        except Exception as e:
+            logger.error("Error getting loan application: %s", e)
+            raise HTTPException(
+                status_code=500, detail="Error getting loan application")
+        
 
+    @router.put("/loan_applications/{application_id}/")
+    def update_loan_application(
+            application_id: int, application):
+        try:
+            logger.info("Updating loan application with ID: %s",
+                        application_id)
 
-@router.put("/loan_applications/{application_id}/")
-def update_loan_application(
-    application_id: int, application, db: Session = Depends(get_db)
-):
-    try:
-        logger.info("Updating loan application with ID: %s", application_id)
+            db_application = crud.update_loan_application(
+                application_id, application)
 
-        db_application = crud.update_loan_application(db, application_id, application)
+            if db_application is None:
+                logger.warning(
+                    "Loan application with ID %s not found", application_id)
+                raise HTTPException(
+                    status_code=404, detail="Application not found")
 
-        if db_application is None:
-            logger.warning("Loan application with ID %s not found", application_id)
-            raise HTTPException(status_code=404, detail="Application not found")
+            logger.info("Loan application updated successfully")
 
-        logger.info("Loan application updated successfully")
+            return db_application
 
-        return db_application
+        except HTTPException:
+            raise  # re-raise HTTPException so FastAPI can handle it
 
-    except HTTPException:
-        raise  # re-raise HTTPException so FastAPI can handle it
+        except Exception as e:
+            logger.error("Error updating loan application: %s", e)
+            raise HTTPException(
+                status_code=500, detail="Error updating loan application")
+        
 
-    except Exception as e:
-        logger.error("Error updating loan application: %s", e)
-        raise HTTPException(status_code=500, detail="Error updating loan application")
+    @router.patch("/loan_applications/{application_id}/")
+    def patch_loan_application(
+        application_id: int, application: LoanApplicationUpdate
+    ):
+        try:
+            logger.info("Patching loan application with ID: %s",
+                        application_id)
 
+            db_application = crud.patch_loan_application(
+                application_id, application)
 
-@router.patch("/loan_applications/{application_id}/")
-def patch_loan_application(
-    application_id: int,
-    application: LoanApplicationUpdate,
-    db: Session = Depends(get_db),
-):
-    try:
-        logger.info("Patching loan application with ID: %s", application_id)
+            if db_application is None:
+                logger.warning(
+                    "Loan application with ID %s not found", application_id)
+                raise HTTPException(
+                    status_code=404, detail="Application not found")
 
-        db_application = crud.patch_loan_application(db, application_id, application)
+            logger.info("Loan application patched successfully")
 
-        if db_application is None:
-            logger.warning("Loan application with ID %s not found", application_id)
-            raise HTTPException(status_code=404, detail="Application not found")
+            return db_application
 
-        logger.info("Loan application patched successfully")
+        except HTTPException:
+            raise  # re-raise HTTPException so FastAPI can handle it
 
-        return db_application
+        except Exception as e:
+            logger.error("Error patching loan application: %s", e)
+            raise HTTPException(
+                status_code=500, detail="Error patching loan application")
+        
 
-    except HTTPException:
-        raise  # re-raise HTTPException so FastAPI can handle it
+    @router.delete("/loan_applications/{application_id}/")
+    def delete_loan_application(application_id: int):
+        try:
+            logger.info("Deleting loan application with ID: %s",
+                        application_id)
 
-    except Exception as e:
-        logger.error("Error patching loan application: %s", e)
-        raise HTTPException(status_code=500, detail="Error patching loan application")
+            success = crud.delete_loan_application(application_id)
 
+            if not success:
+                logger.warning(
+                    "Loan application with ID %s not found", application_id)
+                raise HTTPException(
+                    status_code=404, detail="Application not found")
 
-@router.delete("/loan_applications/{application_id}/")
-def delete_loan_application(application_id: int, db: Session = Depends(get_db)):
-    try:
-        logger.info("Deleting loan application with ID: %s", application_id)
+            logger.info("Loan application deleted successfully")
 
-        success = crud.delete_loan_application(db, application_id)
+            return {"detail": "Application deleted"}
 
-        if not success:
-            logger.warning("Loan application with ID %s not found", application_id)
-            raise HTTPException(status_code=404, detail="Application not found")
+        except HTTPException:
+            raise  # re-raise HTTPException so FastAPI can handle it
 
-        logger.info("Loan application deleted successfully")
-
-        return {"detail": "Application deleted"}
-
-    except HTTPException:
-        raise  # re-raise HTTPException so FastAPI can handle it
-
-    except Exception as e:
-        logger.error("Error deleting loan application: %s", e)
-        raise HTTPException(status_code=500, detail="Error deleting loan application")
+        except Exception as e:
+            logger.error("Error deleting loan application: %s", e)
+            raise HTTPException(
+                status_code=500, detail="Error deleting loan application")

@@ -3,8 +3,10 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.logging_config import configure_logging
 from app.db.database import engine, Base
-from app.api import loan_application
-from app.kafka.consumer import loan_application_consumer
+from app.api.loan_application import LoanApplicationAPI
+from app.db.crud import LoanApplicationCRUD
+from app.kafka.consumer import LoanApplicationConsumer
+from app.db.database import DatabaseConnection
 import threading
 import uvicorn
 
@@ -26,14 +28,20 @@ app.add_middleware(
 # Configure logging
 logger = configure_logging(__name__)
 
-# Include the loan application API router
-app.include_router(loan_application.router, prefix="/api")
+# Initialize the database connection
+database_connection = DatabaseConnection()
 
+# Include the loan application API router
+loan_api = LoanApplicationAPI()
+app.include_router(loan_api.router, prefix="/api")
 
 # Define a function to run the Kafka consumer in a separate thread
+
+
 def run_consumer():
     logger.info("Starting Kafka consumer")
-    loan_application_consumer()
+    consumer = LoanApplicationConsumer()
+    consumer.consume_loan_application()
 
 
 # Check if the --consumer flag was passed in the command line arguments
