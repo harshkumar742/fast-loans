@@ -24,6 +24,7 @@ class LoanApplicationConsumer:
 
         self.consumer = Consumer(conf)
         self.consumer.subscribe([os.getenv("KAFKA_TOPIC")])
+        self.is_running = True
 
     def consume_loan_application(self):
         with database.SessionLocal() as db:
@@ -59,3 +60,10 @@ class LoanApplicationConsumer:
             except Exception as e:
                 logger.error(f"Error consuming loan application: {str(e)}")
                 continue
+
+
+    def stop(self):
+        logger.info("Stopping Kafka consumer")
+
+        self.is_running = False
+        self.consumer.close()

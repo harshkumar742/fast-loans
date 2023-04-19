@@ -9,6 +9,7 @@ from app.kafka.consumer import LoanApplicationConsumer
 from app.db.database import DatabaseConnection
 import threading
 import uvicorn
+import signal
 
 # Create the database tables using SQLAlchemy
 Base.metadata.create_all(bind=engine)
@@ -28,21 +29,19 @@ app.add_middleware(
 # Configure logging
 logger = configure_logging(__name__)
 
-# Initialize the database connection
-database_connection = DatabaseConnection()
-
 # Include the loan application API router
 loan_api = LoanApplicationAPI()
 app.include_router(loan_api.router, prefix="/api")
 
 # Define a function to run the Kafka consumer in a separate thread
-
-
 def run_consumer():
     logger.info("Starting Kafka consumer")
     consumer = LoanApplicationConsumer()
-    consumer.consume_loan_application()
-
+    try:
+        consumer.consume_loan_application()
+    except KeyboardInterrupt:
+        logger.info("Kafka consumer interrupted. Shutting down gracefully...")
+        consumer.stop()
 
 # Check if the --consumer flag was passed in the command line arguments
 if __name__ == "__main__":

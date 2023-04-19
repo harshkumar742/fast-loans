@@ -1,5 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
+from fastapi import APIRouter, HTTPException
 from app.models.loan_application import LoanApplication
 from app.models.loan_application_update import LoanApplicationUpdate
 from app.logging_config import configure_logging

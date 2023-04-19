@@ -42,6 +42,7 @@ class LoanApplicationCRUD:
                 setattr(db_application, key, value)
 
         self.db.commit()
+        self.db.refresh(db_application)
 
         return db_application
 
