@@ -60,13 +60,13 @@ To perform a rough capacity estimation for "Fast Loans" application with 1 milli
 
 **Traffic Estimation**:
 
-- Total requests per day: 1,000,000 loan applications * (80% read + 20% write) = 2,000,000 requests
-- Requests per second (peak): (2,000,000 requests/day) / (24 hours * 3600 seconds) * 2 (assuming a 2x peak factor) ≈ 46 requests/sec
+- Total requests per day: 1,000,000 loan applications * (80% read + 20% write) = 5,000,000 requests
+- Requests per second (peak): (5,000,000 requests/day) / (24 hours * 3600 seconds) * 2 (assuming a 2x peak factor) ≈ 116 requests/sec
 
 **Bandwidth Estimation**:
 
-- Data in per second (peak): 46 requests/sec * 1 KB (write) * 20% = 9.2 KB/sec
-- Data out per second (peak): 46 requests/sec * 1 KB (read) * 80% = 36.8 KB/sec
+- Data in per second (peak): 116 requests/sec * 1 KB (write) * 20% = 23.2 KB/sec
+- Data out per second (peak): 116 requests/sec * 1 KB (read) * 80% = 92.8 KB/sec
 
 With these rough capacity estimations, we can plan our infrastructure, scaling, and caching strategies accordingly. These numbers are based on assumptions and should be adjusted and monitored as needed based on real-world usage patterns.
 
