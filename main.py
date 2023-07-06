@@ -50,6 +50,7 @@ if __name__ == "__main__":
         "--consumer", action="store_true", help="Run Kafka consumer only"
     )
     args = parser.parse_args()
+    #args is args
 
     # If the --consumer flag was passed, run the Kafka consumer in two separate threads
     if args.consumer:
